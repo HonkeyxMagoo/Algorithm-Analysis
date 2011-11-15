@@ -9,24 +9,21 @@ void swap(t* A, int x, int y) {
 	A[x] = A[y];
 	A[y] = temp;
 }
-template<class T>
-bool is_sorted_b(T input[]) {
-bool sorted = true;
 
-for ( int z = 0; z < SIZE-1; z++ ) {
-if (input[z] > input[z+1]) {
-sorted = false;
-return sorted;
-}
-}
 
-return sorted;
+template<class t>
+bool sorted_ascending(t A[]) {
+	for ( int i = 0; i < SIZE-1; i++ ) {
+		if (A[i] > A[i+1]) 
+			return false;
+	}
+	return true;
 }
 
 
 template <class t> inline
-void selection_sort(t* A) {
-	if (is_sorted_b(A))
+void selection_sort(t A[]) {
+	if (sorted_ascending(A))
 		return;
 
 	size_t min;
@@ -43,5 +40,19 @@ void selection_sort(t* A) {
 	}
 }
 
+
+template <class t>
+void insertion_sort(t A[]) {
+	for (int j = 1; j < SIZE; j ++) {
+		t x = A[j];
+		int i = j - 1;
+		while ( i >= 0 && A[i] > x ) {
+			A[i+1] = A[i];
+			i--;
+		}
+
+		A[i+1] = x;
+	}
+}
 
 #endif

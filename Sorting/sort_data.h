@@ -2,7 +2,7 @@
 #define SORT_DATA_H
 #include <iostream>
 
-#define SIZE 100000
+#define SIZE 10000
 int A[SIZE];
 
 void array_increasing() {
