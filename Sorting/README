@@ -1,0 +1,5 @@
+Sorting Algorithms
+
+Tests runtime of selection sort, insertion sort, and quik sort 
+using arrays of 100,000 values in increasing, decreasing, 
+and random order.
