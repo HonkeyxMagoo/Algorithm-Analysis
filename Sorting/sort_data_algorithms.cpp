@@ -1,5 +1,5 @@
 #include "sort_data.h"
-
+#define MAX 100001
 
 void sort_data::swap(int* A, int x, int y) {
 	int temp;
@@ -51,30 +51,161 @@ void sort_data::selection_sort(int *A) {
 	}
 }
 
- int sort_data::partition(int *A, int l, int r, int p) {
-	int pVal = A[p];
-	int sIndex = l - 1;
-	for (int i = l; i < r; i++) {
-		if (A[i] < pVal) {
-			sIndex += 1;
-			swap(A, i, sIndex);
-		}
-	}
-	swap(A, sIndex+1, r);
-	return sIndex+1;
+void sort_data::partition(int *A, int &i, int &j, int q) {
+	int tmp;
+	      while (i <= j) {
+            while (A[i] < q)
+                  i++;
+            while (A[j] > q)
+                  j--;
+				  
+            if (i <= j) {
+                  tmp = A[i];
+                  A[i] = A[j];
+                  A[j] = tmp;
+                  i++;
+                  j--;
+            }
+      };
+}
+
+void sort_data::quickSort(int *A, int l, int r) {
+      int i = l, j = r;
+      int q = A[(l + r) / 2];
+ 
+	partition(A, i, j, q);
+	if (l < j)
+        quickSort(A, l, j);
+	if (i < r)
+		quickSort(A, i, r);
 }
 
 void sort_data::q_sort(int *A) {
 	int l = 0;
-	int r = SIZE-1;
-	quiksort(A, l, r);
+	quickSort(A, l, SIZE-1);
 }
 
-void sort_data::quiksort(int *A, int l, int r) {
-	if (l < r) {
-		int p = r;
-		int pNew = partition(A, l, r, p);
-		quiksort(A, l, pNew-1);
-		quiksort(A, pNew+1, r);
+
+void sort_data::counting_sort(int *A) {
+  
+  int *temp = new int[SIZE];
+ 
+  int *counter = new int[MAX + 1];
+  for (int i = 0; i <= MAX; i++)
+    counter[i] = 0;
+  
+  for (int j = 0; j < SIZE; j++)
+    counter[A[j]] = counter[A[j]] + 1;
+
+  for (int k = 1; k <= MAX; k++)
+    counter[k] += counter[k - 1];
+
+  for (int i = SIZE - 1; i >= 0; i--) {
+    temp[counter[A[i]] - 1] = A[i];
+    --counter[A[i]];
+  }
+
+  for (int i = 0; i < SIZE; i++)
+    A[i] = temp[i];
+  delete [] temp;
+  delete [] counter;
+}
+
+int sort_data::getSmaller(int x, int y) {
+	if(x < y)
+		return x;
+    
+    else
+		return y;   
+}
+
+void sort_data::merge(int *A, int l, int r, int pLeft, int pRight) {
+	int length = r - l;
+    int pivot = length/2;
+
+	int *subarray = new int[SIZE];
+
+    for(int i = 0; i < length; i++) {
+		if(pLeft < l + pivot)
+			if(pRight == r || getSmaller(A[pLeft], A[pRight]) == A[pLeft]) {
+				subarray[i] = A[pLeft];
+				pLeft++;
+			}
+			else{
+				subarray[i] = A[pRight];
+				pRight++;
+			}
+    }
+
+    for(int i = l; i < r; i++) {
+        A[i] = subarray[i - l];
+    }
+
+	delete [] subarray;
+}
+
+void sort_data::mergesort(int *A, int l, int r) {
+    if(r == l + 1)
+		return;
+    else {
+        int length = r - l;
+        int pivot = length/2;
+        int pLeft = l, pRight = l + pivot;
+
+        mergesort(A, l, l + pivot);
+        mergesort(A, l + pivot, r);
+
+		merge(A, l, r, pLeft, pRight);
+    }
+}
+
+void sort_data::m_sort(int *A) {
+		mergesort(A, 0, SIZE);
+}
+
+int sort_data::parent(int i) {
+	return i/2;
+}
+int sort_data::left(int i) {
+	return 2*i;
+}
+int sort_data::right(int i) {
+	return 2*i +1;
+}
+
+void sort_data::max_heapify(int *A, int i) {
+	int max = 0;
+	int l = left(i);
+	int r = right(i);
+
+	if (l <= heapSize && A[l] > A[i])
+		max = l;
+	else
+		max = i;
+	if (r <= heapSize && A[r] > A[max])
+		max = r;
+	if (max != i) {
+		swap(A, i, max);
+		max_heapify(A, max);
 	}
 }
+
+void sort_data::build_max_heap(int * A) {
+	heapSize = SIZE-1;
+
+	for (int i = (SIZE-1)/2; i >= 0; i--) 
+		max_heapify(A, i);
+}
+
+void sort_data::h_sort(int *A) {
+	build_max_heap(A);
+
+	for (int i = SIZE-1; i>=1; i--) {
+		swap(A, 0, i);
+		heapSize = heapSize-1;
+		max_heapify(A, 0);
+	}
+}
+
+
+

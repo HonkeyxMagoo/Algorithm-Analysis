@@ -1,6 +1,8 @@
 #include "sort_data.h"
-
+#include <omp.h>
 using namespace std;
+int const TEST_NUM = 6;
+
 
 /*
  * test array
@@ -9,9 +11,12 @@ using namespace std;
  * sorts an array pArray using function *sort
  */
 void sort_data::test(int *pArray, void (sort_data::*sort)(int *) ) {
-	print_array(pArray);
+	//print_array(pArray);
+	double start = omp_get_wtime();
 	(this->*sort)(pArray);
-	print_array(pArray);
+	double end = omp_get_wtime();
+	printf("Runtime: %f seconds\n", end - start);
+	//print_array(pArray);
 	cout << endl;
 }
 
@@ -26,23 +31,26 @@ void sort_data::test_all() {
 	typedef void (sort_data::*pFunc) (int *);  
 
 	//list of sort functions
-	pFunc funcList[] = { &sort_data::selection_sort, &sort_data::insertion_sort,
-						 &sort_data::q_sort};
+	 //   &sort_data::m_sort
+	pFunc funcList[] = {&sort_data::selection_sort, &sort_data::insertion_sort,
+						 &sort_data::counting_sort, &sort_data::q_sort, &sort_data::m_sort, &sort_data::h_sort};
 	//sort type names
-	char* type[] = {"Selectoin Sort", "Insertion Sort", "Quik Sort"};
+	char* type[] = {"Selectoin Sort", "Insertion Sort", "Counting Sort", "Quik Sort", "Merge Sort", "Heap Sort"};
 
 	//number of functions to iterate
 	int funcNum  = sizeof funcList / sizeof pFunc;
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < TEST_NUM; i++) {
 		set_arrays();
 		cout << type[i] << endl
 			 <<	"--------------------------\n";
-		cout << "Increasing\n";
+		cout << "Increasing Order\n";
 		test(pInc,funcList[i]);
-		cout << "Decreasing\n";
+
+		cout << "Decreasing Order\n";
 		test(pDec,funcList[i]);
-		cout << "Random\n";
+
+		cout << "Random Order\n";
 		test(pRnd,funcList[i]);
 	}
 	del_arrays(); //free memory
@@ -91,9 +99,8 @@ void sort_data::array_increasing(int *A) {
  * defines an array if decreasing values
  */
 void sort_data::array_decreasing(int *A) {
-	int max = SIZE;
 	for (int i = 0;  i < SIZE; i++) {
-		A[i] = max - i;
+		A[i] = SIZE - i;
 	}
 }
 

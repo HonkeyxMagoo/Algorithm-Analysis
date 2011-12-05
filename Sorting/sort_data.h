@@ -5,8 +5,13 @@
 
 class sort_data {
 	private:
-		int SIZE;							
-		int *pInc, *pDec, *pRnd;	
+		int SIZE;
+		int heapSize;
+		int parent(int i);
+		int left(int i);
+		int right(int i);
+		int *pInc, *pDec, *pRnd;
+		int getSmaller(int x, int y);
 		void set_arrays();
 		void del_arrays();
 		void array_increasing(int *A);
@@ -16,9 +21,16 @@ class sort_data {
 		void swap(int* A, int x, int y);	//swap array elements
 		void selection_sort(int *A);
 		void insertion_sort(int *A);
-		int partition(int *A, int l, int r, int p);
-		void quiksort(int *A, int l, int r);
+		void partition(int *A, int &i, int &j, int q);
+		void quickSort(int *A, int l, int r);
+		void merge(int *A, int l, int r, int pLeft, int pRight);
+		void mergesort(int *A, int l, int r);
+		void m_sort(int *A);
 		void q_sort(int *A);
+		void counting_sort(int *A);
+		void h_sort(int *A);
+		void build_max_heap(int *A);
+		void max_heapify(int *A, int i);
 
 	public:
 		sort_data() { srand(time(0)); }
